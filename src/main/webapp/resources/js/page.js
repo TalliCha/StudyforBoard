@@ -21,6 +21,8 @@ function init(data) {
 		
 	});
 	
+	listSizeListener(data);
+	
 }
 
 /* 코드 줄일수 있음  하지만 나중에...*/
@@ -61,7 +63,7 @@ function textareaChange() {
 	    var target = "tchangeLength"+split[0];
 //	    alert(target);	
 //	    alert(changeHeight);
-	    $("."+target).attr( 'height', ((changeHeight + 20) +"px") );
+//	    $("."+target).attr( 'height', ((changeHeight + 20) +"px") );
 	});
 }
 function add_listener(data) {
@@ -227,11 +229,11 @@ function getComm_List(data) {
 		,method : 'post'
 		,url : "/board/getCommentList"
 		,data : {
-			'pno' :  data.pno.val()
+			'comm_pno' :  data.comm_pno.val()
 			,'bno' :  data.bno.val()
-			,'pageSize' : data.pageSize.val()
-			,'naviSize' : data.naviSize.val()
-			,'maxPage' : data.maxPage.val()
+			,'comm_pageSize' : data.comm_pageSize.val()
+			,'comm_naviSize' : data.comm_naviSize.val()
+			,'comm_maxPage' : data.comm_maxPage.val()
 		}
 		,dataType : 'json'
 		,success : function(getData) {
@@ -255,9 +257,9 @@ function comm_MaxPage(data) {
 		}
 		,dataType : 'json'
 		,success : function(getData) {
-			data.maxPage.val( getData.maxPage ) ;
+			data.comm_maxPage.val( getData.maxPage ) ;
 			
-			$('#maxContent').html("전체 댓글수 "+data.maxPage.val()+":개");
+			$('#maxContent').html("전체 댓글수 "+data.comm_maxPage.val()+":개");
 			
 		}
 	});
@@ -370,28 +372,20 @@ function makeNavi(data) {
 	
 	var row = "";
 	
-	var end_pno = Math.ceil( Number( data.maxPage.val() ) / Number( data.pageSize.val() ));	
+	var comm_end_pno = Math.ceil( Number( data.comm_maxPage.val() ) / Number( data.comm_pageSize.val() ));	
 
-	if( data.pno.val() > end_pno ){
-		data.pno.val( end_pno );
-	}else if( data.pno.val() <= 0 ){
-		data.pno.val( 1 );
+	if( data.comm_pno.val() > comm_end_pno ){
+		data.comm_pno.val( comm_end_pno );
+	}else if( data.comm_pno.val() <= 0 ){
+		data.comm_pno.val( 1 );
 	}
 	
-	var navi_start = Number( data.pno.val() ) - ( (data.pno.val()-1 ) % Number( data.naviSize.val() ) );
-	var prev = navi_start - Number(data.naviSize.val());
-	var prev50 = navi_start - 50;
-	var next = navi_start + Number(data.naviSize.val());
-	var next50 = navi_start + 50;
+	var comm_navi_start = Number( data.comm_pno.val() ) - ( (data.comm_pno.val()-1 ) % Number( data.comm_naviSize.val() ) );
+	var prev = comm_navi_start - Number(data.comm_naviSize.val());
+	var prev50 = comm_navi_start - 50;
+	var next = comm_navi_start + Number(data.comm_naviSize.val());
+	var next50 = comm_navi_start + 50;
 
-//	alert( 'maxPage:'+ data.maxPage.val() );
-//	alert(  'pno:'+data.pno.val() );
-//	alert(  'naviSize:'+data.naviSize.val() );
-//	alert(  'navi_start:'+ navi_start );
-//	alert( 'end_pno:' + end_pno);
-//	
-//	alert(  'prev:'+ prev );
-//	alert(  'next:'+ next );
 
 	if (prev50 > 0) {
 		row = row + "<li><a id='1' class='navi'>1...</a></li>";
@@ -403,24 +397,24 @@ function makeNavi(data) {
 		row = row + "<li><a id='"+prev+"' class='navi'><span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span></a></li>";
 	}
 
-	for (var i = 0; i < data.naviSize.val(); i++) {
-		if (navi_start > end_pno) {
+	for (var i = 0; i < data.comm_naviSize.val(); i++) {
+		if (comm_navi_start > comm_end_pno) {
 			break;
 		}
-		row = row + "<li><a id='"+ navi_start +"' class='navi'>" + navi_start + "</a></li>";
-		navi_start++;
+		row = row + "<li><a id='"+ comm_navi_start +"' class='navi'>" + comm_navi_start + "</a></li>";
+		comm_navi_start++;
 		
 	}/* end:for  */
 	
-	if (next <= end_pno) {
+	if (next <= comm_end_pno) {
 		row = row + "<li><a  id='"+next+"' class='navi'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span></a></li>";
 	} /* end:if  */
 	
-	if (next50 <= end_pno) {
+	if (next50 <= comm_end_pno) {
 		row = row + "<li><a  id='"+next50+"' class='navi'><span class='glyphicon glyphicon-forward' aria-hidden='true'></span></a></li>";
 	} /* end:if  */
 	
-	if (next50 <= end_pno) {
+	if (next50 <= comm_end_pno) {
 		row = row + "<li><a  id='"+end_pno+"' class='navi'>..."+end_pno+"</a></li>";
 	} /* end:if  */
 
@@ -434,7 +428,7 @@ function makeNavi(data) {
 /*페이지 클릭 동장*/
 function pageListener(data) {
 	$('.navi').click(function() {
-		data.pno.val( $(this).attr('id') ) ;
+		data.comm_pno.val( $(this).attr('id') ) ;
 		
 		comm_make(data);
 	
@@ -442,10 +436,19 @@ function pageListener(data) {
 	});
 }
 
-/* 추 가 기능 */	
+/* 추 가 기능 */
+
+/*보여줄 페이지 사이즈 조절 동장*/
+function listSizeListener(data) {
+	$('.pageSize').click(function() {
+		data.comm_pno.val( 1 );
+		data.comm_pageSize.val( $(this).html() );	
+		comm_make(data);
+	});
+}
 
 /*페이지 선택*/
 function pageSet(data) {
 	$('.navi').removeClass('active');
-	$('#' + data.pno.val()).addClass('active');
+	$('#' + data.comm_pno.val()).addClass('active');
 }/*end:function  */

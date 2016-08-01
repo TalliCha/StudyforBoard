@@ -163,7 +163,7 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/board/page", method = RequestMethod.POST)
-	public String pagePOST(UploadVO upVO, ConVO conVO, BoardVO boVO) throws Exception {
+	public String pagePOST(UploadVO upVO, BoardVO boVO, @Valid ConVO conVO, BindingResult conResult) throws Exception {
 		logger.info("[PAGE_POST: content page.]");
 		logger.info("BoardVO : {}", boVO);
 		logger.info("ConVO : {}", conVO);
@@ -283,7 +283,7 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/board/getCommentList", method = RequestMethod.POST)
-	public @ResponseBody List<CommentVO> getComment( ConVO conVO ) throws Exception {
+	public @ResponseBody List<CommentVO> getComment(@Valid ConVO conVO, BindingResult commResult ) throws Exception {
 		logger.info("[GETLIST_POST: comment list.]");
 		logger.info("ConVO : {}", conVO);
 

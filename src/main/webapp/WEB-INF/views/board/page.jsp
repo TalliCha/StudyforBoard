@@ -10,13 +10,20 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	var data = {
-			pno : $('#pno')
-			,bno : $('#bno')
+			bno : $('#bno')
 			,cno : 0
-			
-			,keyWord : $('#keyWord')
+
+			,pno : $('#pno')
+			,maxPage : $('#maxPage')
 			,pageSize : $('#pageSize')
 			,naviSize : $('#naviSize')
+			
+			,comm_pno : $('#comm_pno')
+			,comm_maxPage : $('#comm_maxPage')
+			,comm_pageSize : $('#comm_pageSize')
+			,comm_naviSize : $('#comm_naviSize')
+
+			,keyWord : $('#keyWord')
 			
 			,original_fname :  $('#original_fname')
 			,upload_fname :   $('#upload_fname')
@@ -26,7 +33,7 @@ $(document).ready(function() {
 			,content : $('#content') 
 			,writer : $('#writer')
 			
-			,maxPage : $('#maxPage')
+			
 			
 			,contentMax : 400
 			,writerMax : 80
@@ -87,7 +94,6 @@ $(document).ready(function() {
     text-overflow: ellipsis;
     position: relative;
     float: left;
-    
 
 }
 
@@ -108,6 +114,7 @@ $(document).ready(function() {
 	width: 10%;
 }
 #comm_list  td:NTH-CHILD(2) {
+	text-align: left;
 	width: 60%;
 }
 #comm_list  td:NTH-CHILD(3) {
@@ -130,12 +137,23 @@ $(document).ready(function() {
 				</div>
 				<!-- /.box-header -->
 				<form role="form" method="post">
-					<input type='hidden' id="pno" name='pno' value="${conVO.pno}">
+					
+					<!-- conVO list parameters  -->
 					<input type='hidden' id="keyWord" name='keyWord' value="${conVO.keyWord}">
+					<input type='hidden' id="pno" name='pno' value="${conVO.pno}">
 					<input type='hidden'  id="pageSize" name='pageSize' value="${conVO.pageSize}">
 					<input type='hidden' id="naviSize" name='naviSize' value="${conVO.naviSize}">
 					<input type='hidden' id="maxPage" name='maxPage' value="${conVO.maxPage}">
 					
+					
+					<!-- conVO comm_list parameters  -->
+					<input type='hidden' id="comm_pno" name='comm_pno' value="${conVO.comm_pno}">
+					<input type='hidden'  id="comm_pageSize" name='comm_pageSize' value="${conVO.comm_pageSize}">
+					<input type='hidden' id="comm_naviSize" name='comm_naviSize' value="${conVO.comm_naviSize}">
+					<input type='hidden' id="comm_maxPage" name='comm_maxPage' value="${conVO.comm_maxPage}">
+					
+					
+					<!-- boardVO parameters  -->
 					<input type='hidden' id='sendMsg' name='sendMsg' value="${sendMsg}">
 					<input type='hidden' id="bno" name='bno' value="${boardVO.bno}">
 					<input type='hidden' name='title' value="${boardVO.title}">
@@ -145,6 +163,8 @@ $(document).ready(function() {
 					<input type='hidden' name='reply_bno' value="${boardVO.reply_bno}">
 					<input type='hidden' name='reply_lv' value="${boardVO.reply_lv}">
 					
+					
+					<!-- uploadVO parameters  -->
 					<input type='hidden' id="fno" name='fno' value="${uploadVO.fno}">
 					<input type='hidden' id="original_fname" name='original_fname' value="${uploadVO.original_fname}">
 					<input type='hidden'  id="upload_fname" name='upload_fname' value="${uploadVO.upload_fname}">
@@ -219,13 +239,22 @@ $(document).ready(function() {
 						<button id="comm_write" type="button" class="btn">작성</button>
 					</form>
 				</div>
-				
+				<div class="btn-group">
+			                  <button type="button" class="btn btn-default" disabled="disabled" >CommentSize</button>
+			                  <button type="button" class="btn btn-default" data-toggle="dropdown" aria-expanded="false">
+			                    <span class="caret"></span>
+			                    <span class="sr-only">Toggle Dropdown</span>
+	               			  </button>
+			                  <ul class="dropdown-menu" role="menu">
+			                    <li><a class="pageSize">5</a></li>
+			                    <li><a class="pageSize">10</a></li>
+			                    <li><a class="pageSize">15</a></li>
+		                	  </ul>
+		                </div>
 				<div id="comment" class="box-footer">
 					<span id="maxContent">전체 댓글 0:개</span>
-				       <div class="table-responsive">
-							<table id="comm_list" class="table table-bordered">
-							</table>
-						</div>
+						<table id="comm_list" class="table table-bordered">
+						</table>
 					<div class="text-center">
 						<ul class="pagination">
 

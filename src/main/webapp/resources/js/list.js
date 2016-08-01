@@ -110,12 +110,12 @@
 	
 	/*보여줄 페이지 사이즈 조절 동장*/
 	function listSizeListener(data) {
-			$('.pageSize').click(function() {
+		$('.pageSize').click(function() {
 				data.pno.val( 1 );
 				data.pageSize.val( $(this).html() );	
 				init(data);
-			});
-		}
+		});
+	}
 	
 	/*카테고리 동작*/
 	function categoryListener(data) {
@@ -179,9 +179,10 @@
 			
 //			alert( list[idx].parent_bno );
 			
-			if(list[idx].parent_bno == 0){
-				titleTab += "<span class='text-red' style='font-size: x-small;'> --원글이 삭제된 답변입니다-- </span>";
-			}
+			// 삭제 표시 정책 변경에 따른 주석 처리 : 자식글에 원글이 삭제 되었습니다 표시.
+//			if(list[idx].parent_bno == 0){
+//				titleTab += "<span class='text-red' style='font-size: x-small;'> --원글이 삭제된 답변입니다-- </span>";
+//			}
 			
 			if(list[idx].upload_file > 0){
 				upload_file += "<span class='glyphicon glyphicon-floppy-disk'></span>";

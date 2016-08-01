@@ -390,14 +390,14 @@
 		,TC.reply_lv
 		,TC.parent_cno
 	FROM
-		tbl_comment as TC, ( Select @rownum:=#{maxPage}-#{pageStart}+1 ) TMP 
+		tbl_comment as TC, ( Select @rownum:=#{comm_maxPage}-#{comm_pageStart}+1 ) TMP 
 	WHERE
 		bno = #{bno}
 	ORDER BY
 		ref_cno DESC
 		,reply_cno ASC
 	LIMIT
-		#{pageStart} , #{pageSize}
+		#{comm_pageStart} , #{comm_pageSize}
 		
 	</select>
 	
