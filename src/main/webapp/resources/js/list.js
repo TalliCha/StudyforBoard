@@ -243,7 +243,7 @@
 //		alert(  'next:'+ next );
 		
 		
-		if (prev50 > 0) {
+		if (prev > 0) {
 			row = row + "<li><a id='1' class='navi'>1...</a></li>";
 		}
 		if (prev50 > 0) {
@@ -270,7 +270,7 @@
 			row = row + "<li><a  id='"+next50+"' class='navi'><span class='glyphicon glyphicon-forward' aria-hidden='true'></span></a></li>";
 		} /* end:if  */
 		
-		if (next50 <= end_pno) {
+		if (next <= end_pno) {
 			row = row + "<li><a  id='"+end_pno+"' class='navi'>..."+end_pno+"</a></li>";
 		} /* end:if  */
 
