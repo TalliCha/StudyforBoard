@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ojt.test.mapper.BoardMapper">
+
+	<!-- board  -->
+
+	<!-- bno 최대값   -->
+	<select id="next_bno" resultType="Integer">
+		SELECT
+			(COALESCE(MAX(bno),0)+1) bno
+		FROM
+			tbl_board;
+	</select>
+	
+	<!-- board 글쓰기   -->
+	<insert id="create">
+		INSERT INTO
+			tbl_board(
+				bno
+				,title
+				,content
+				,writer
+				,ref_bno
+				,reply_bno
+				,reply_lv
+				)
+		VALUES(
+				#{bno}
+				, #{title}
+				, #{content}
+				 ,#{writer}
+				, #{bno}
+				, 0
+				, 0
+				)
+	</insert>
+
+	<!-- board 답변글  1/2  -->
+	<update id="reply_step1_2">
+		UPDATE
+			tbl_board
+		SET
+			reply_bno = reply_bno + 1
+		WHERE
+			ref_bno = #{ref_bno}
+			And
+			reply_bno > #{reply_bno};
+	</update>
+	<!-- board 답변글  2/2  -->
+	<insert id="reply_step2_2">
+		INSERT INTO
+			tbl_board(
+				bno
+				,title
+				,content
+				,writer
+				,ref_bno
+				,reply_bno
+				,reply_lv
+				,parent_bno
+				)
+		VALUES(
+				#{bno}
+				, #{title}
+				, #{content}
+				 ,#{writer}
+				, #{ref_bno}
+				, #{reply_bno}+1
+				, #{reply_lv}+1
+				, #{parent_bno}
+				)
+	</insert>
+	
+	<!-- board 글 수정  -->
+	<update id="update">
+		UPDATE
+			tbl_board
+		SET
+			title = #{title}
+			,content = #{content}
+		WHERE
+			bno = #{bno}
+	</update>
+	
+	<!-- board 글삭제 -->
+	<delete id="delete"> 
+		DELETE FROM
+			tbl_board
+		WHERE
+			bno = #{bno}
+	</delete>
+	
+	<!-- board 삭제된 글 자식 링크 제거  -->
+	<update id="deleteChildLink">
+		UPDATE
+			tbl_board
+		SET
+			parent_bno = 0
+	 	WHERE
+	 		parent_bno = #{bno}
+	</update>
+
+	<!-- board 글 수 -->
+	<select id="countList" parameterType="ojt.test.domain.ConVO" resultType="ojt.test.domain.ConVO">
+		<![CDATA[
+			SELECT
+				count(bno) as maxPage
+			FROM
+				tbl_board
+			WHERE
+		 ]]>
+		<if test="category == 'title'.toString() ">
+			title REGEXP #{keyWord}
+		</if>
+		<if test="category == 'content'.toString() ">
+			content REGEXP #{keyWord}
+		</if>
+		<if test="category == 'writer'.toString() ">
+			writer REGEXP #{keyWord}
+		</if>
+	</select>
+
+	<!-- board 글 읽은 수 카운터  -->
+	<update id="viewCount">
+		UPDATE
+			tbl_board a
+			,(
+			SELECT
+				viewcnt
+			FROM
+				tbl_board
+			WHERE
+				bno = #{bno}) b
+		SET
+			a.viewcnt = b.viewcnt+1
+		WHERE
+			a.bno = #{bno};
+	</update>
+
+	<!-- board 글 내용  -->
+	<select id="viewContent" resultType="ojt.test.domain.BoardVO">
+		SELECT
+			bno
+			,title
+			,content
+			,writer
+			,ref_bno
+			,reply_bno
+			,reply_lv
+			,upload_file
+			,parent_bno
+		FROM
+			tbl_board
+		WHERE
+			bno=#{bno}
+	</select>
+	
+	<!-- board 글 목록  -->
+	<select id="viewList" parameterType="ojt.test.domain.ConVO" resultType="ojt.test.domain.BoardVO">
+		<![CDATA[
+		SELECT
+			(@rownum:=@rownum-1) rno
+			,tb.bno
+			,tb.title
+			,tb.writer
+			,tb.regdate
+			,tb.viewcnt
+			,tb.ref_bno
+			,tb.reply_bno
+			,tb.reply_lv
+			,tb.upload_file
+			,tb.parent_bno
+		    ,(SELECT
+		    	COUNT(cno)
+	    	 FROM
+	    	 	tbl_comment
+	       	 WHERE
+	       	 	bno = tb.bno ) count_cno
+		FROM
+			tbl_board as tb, ( Select @rownum:=#{maxPage}-#{pageStart}+1 ) TMP 
+		WHERE
+		 ]]>
+		<if test="category == 'title'.toString() ">
+			title REGEXP #{keyWord}
+		</if>
+		<if test="category == 'content'.toString() ">
+			content REGEXP #{keyWord}
+		</if>
+		<if test="category == 'writer'.toString() ">
+			writer REGEXP #{keyWord}
+		</if>
+		<![CDATA[
+		ORDER BY
+			ref_bno DESC, reply_bno ASC 
+		LIMIT
+			 #{pageStart}
+			 , #{pageSize}
+		]]>
+	</select>
+	
+	<!-- upload -->
+	
+	<!--  upload 파일 올리기 -->
+	<insert id="upload">
+		INSERT INTO
+			tbl_upload(
+			bno
+			,original_fname
+			,upload_fname
+			,fsize
+			,ftype
+			)
+		VALUES(
+			#{bno}
+			, #{original_fname}
+			, #{upload_fname}
+			 ,#{fsize}
+			, #{ftype}
+			)
+	</insert>
+	
+	<!--  upload  파일 수정하기 -->
+	<update id="uploadModify">
+		UPDATE
+			tbl_upload
+		SET
+			original_fname = #{original_fname}
+			,upload_fname = #{upload_fname}
+			,fsize = #{fsize}
+			,ftype = #{ftype}
+	 	WHERE
+	 		bno = #{bno};
+	</update>
+	
+	<!--  upload 파일 보기 -->
+	<select id="viewUpload" resultType="ojt.test.domain.UploadVO">
+		SELECT
+			fno
+		    ,bno
+		    ,original_fname
+		    ,upload_fname
+		    ,fsize
+		    ,ftype
+		FROM
+			tbl_upload
+		WHERE
+			bno= #{bno};
+	</select>
+	
+	<!--  upload 글 각각의 파일 수 처리 -->
+	<update id="uploadCount">
+		UPDATE
+			tbl_board
+		SET
+			upload_file = (
+								SELECT
+									count(fno)
+								FROM
+									tbl_upload
+								WHERE
+									bno = #{bno}
+								 )
+	 	WHERE bno = #{bno};
+	</update>
+	<delete id="uploadDelete"> 
+		DELETE FROM
+			tbl_upload
+		WHERE
+			fno = #{fno}
+	</delete>
+	
+	<!-- comment  -->
+	
+	<select id="next_cno" resultType="Integer">
+		SELECT
+			(COALESCE(MAX(cno),0)+1) cno
+		FROM
+			tbl_comment;
+	</select>
+	
+	<insert id="comm_create">
+		INSERT INTO
+			tbl_comment(
+				cno
+				,bno
+				,content
+				,writer
+				,ref_cno
+				,reply_cno
+				,reply_lv
+				)
+		VALUES(
+				#{cno}
+				, #{bno}
+				, #{content}
+				 ,#{writer}
+				, #{cno}
+				, 0
+				, 0
+				)
+	</insert>
+	<!-- comment 답변 처리 1/2 -->
+	<update id="comm_reply_step1_2">
+		UPDATE
+			tbl_comment tc, (
+				SELECT
+					ref_cno
+					,reply_cno 
+				FROM 
+					tbl_comment
+				WHERE
+					cno =  #{parent_cno} 
+					) tc2
+		SET
+			tc.reply_cno = tc.reply_cno + 1
+		WHERE
+			tc.ref_cno = tc2.ref_cno
+			And
+			tc.reply_cno > tc2.reply_cno;
+	</update>
+	<!-- comment 답변 처리 2/2 -->
+	<insert id="comm_reply_step2_2">
+		INSERT INTO
+			tbl_comment(
+				cno
+				,bno
+				,content
+				,writer
+				,ref_cno
+				,reply_cno
+				,reply_lv
+				,parent_cno
+				)
+		SELECT
+				#{cno}
+				, #{bno}
+				, #{content}
+				 ,#{writer}
+				,(tc.ref_cno) 
+				,(tc.reply_cno +1)  
+				,(tc.reply_lv +1)  
+				, #{parent_cno}
+		FROM
+			tbl_comment tc
+ 	 	WHERE 
+			tc.cno = #{parent_cno};
+	</insert>
+	
+	<!-- comment 수정 -->
+	<update id="comm_update">
+		UPDATE
+			tbl_comment
+		SET
+			content = #{content}
+		WHERE
+			cno = #{cno}
+	</update>
+	
+	<!-- comment 삭제 -->
+	<delete id="comm_delete"> 
+		DELETE FROM
+			tbl_comment
+		WHERE
+			cno = #{cno}
+	</delete>
+	
+	<!-- comment 삭제된 자식 링크 제거  -->
+	<update id="comm_deleteChildLink">
+		UPDATE
+			tbl_comment
+		SET
+			parent_cno = 0
+	 	WHERE
+	 		parent_cno = #{cno}
+	</update>
+	
+	<!-- comment 목록 보기  -->
+	<select id="comm_viewList" resultType="ojt.test.domain.CommentVO">
+	SELECT
+		(@rownum:=@rownum-1) rno
+		,TC.cno
+		,TC.content
+		,TC.writer
+		,TC.regdate
+		,TC.ref_cno
+		,TC.reply_cno
+		,TC.reply_lv
+		,TC.parent_cno
+	FROM
+		tbl_comment as TC, ( Select @rownum:=#{maxPage}-#{pageStart}+1 ) TMP 
+	WHERE
+		bno = #{bno}
+	ORDER BY
+		ref_cno DESC
+		,reply_cno ASC
+	LIMIT
+		#{pageStart} , #{pageSize}
+		
+	</select>
+	
+	<!-- 선택 글의 comment 수 -->
+	<select id="comm_countList" resultType="ojt.test.domain.ConVO">
+		SELECT
+			count(cno) as maxPage
+		FROM
+			tbl_comment
+		WHERE
+			bno = #{bno}
+	</select>
+	
+</mapper>
+
