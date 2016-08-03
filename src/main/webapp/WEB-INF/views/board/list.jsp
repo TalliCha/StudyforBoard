@@ -138,7 +138,8 @@
 		categoryListener(data); // list.js: 연결 - category 선택시 페이지 로딩
 		
 		$('#excel_down').click(function() {
-			var loc = 	"/excelDownload?"+"pno="+data.pno.val()+"&keyWord="+data.keyWord.val()+"&category="+data.category.val()+"&maxPage="+data.maxPage.val();
+			var loc = 	"/excelDownload?"+"pno="+data.pno.val()+"&keyWord="+data.keyWord.val()
+					+"&category="+data.category.val()+"&maxPage="+data.maxPage.val()+"&pageSize="+data.pageSize.val();
 // 			alert(loc);
 			location.href= loc ; 
 
