@@ -32,7 +32,7 @@ public interface BoardDAO {
 	/* Upload 처리 */
 	public void upload(UploadVO upVO) throws Exception;
 
-	public void viewUpload_file(BoardVO boVO, UploadVO upVO) throws Exception;
+	public List<UploadVO> viewUpload_file(BoardVO boVO)  throws Exception;
 
 	public void uploadCount(BoardVO boVO) throws Exception;
 
@@ -53,6 +53,8 @@ public interface BoardDAO {
 	public List<CommentVO> comm_viewList( ConVO conVO ) throws Exception;
 	
 	public ConVO comm_getMaxPage(ConVO vo) throws Exception;
+
+	public void deleteFile(String delete_upload_fname);
 	
 
 

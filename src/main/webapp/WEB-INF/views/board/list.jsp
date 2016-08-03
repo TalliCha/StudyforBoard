@@ -26,14 +26,19 @@
 	margin: 0 auto;
 }
 
+#boardList tr{
+	display:  inline;  
+	text-align: center;
+	vertical-align: middle;
+}
+
 #boardList th{
 	display:  inline-block;  
 	text-align: center;
 }
 
 #boardList td{
- 	display:  inline-block;  
-	text-align: center;
+ 	display:  inline-block;   
 	
 	white-space: nowrap;
     overflow: hidden;
@@ -41,8 +46,13 @@
     position: relative;
     float: left;
     
-    height: 40px;
-
+    width: 100%;
+    
+    height: 60px;
+    
+	text-align: center;
+	vertical-align: middle;
+    
 }
 #boardList th:NTH-CHILD(1) {
 	width: 10%;
@@ -97,7 +107,7 @@
 
 .titleOverLength{
 	display:  inline-block;  
-	width: 90%;
+	width: 80%;
 	white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

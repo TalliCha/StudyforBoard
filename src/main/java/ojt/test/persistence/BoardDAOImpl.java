@@ -97,9 +97,8 @@ public class BoardDAOImpl implements BoardDAO {
 	}
 
 	@Override
-	public void viewUpload_file(BoardVO boVO, UploadVO upVO) {
-		UploadVO dbVO = sqlSession.selectOne(NAMESPACE + ".viewUpload", boVO);
-		BeanUtils.copyProperties(dbVO, upVO); // DB 결과 값 저장
+	public List<UploadVO> viewUpload_file(BoardVO boVO) {
+		return sqlSession.selectList(NAMESPACE + ".viewUpload", boVO);
 	}
 
 	@Override
@@ -156,6 +155,11 @@ public class BoardDAOImpl implements BoardDAO {
 	@Override
 	public ConVO comm_getMaxPage(ConVO vo) throws Exception {
 		return sqlSession.selectOne(NAMESPACE + ".comm_countList",vo);
+	}
+
+	@Override
+	public void deleteFile(String delete_upload_fname) {
+		sqlSession.delete(NAMESPACE + ".deleteFile", delete_upload_fname);
 	}
 
 }

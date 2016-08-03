@@ -1,7 +1,7 @@
 package ojt.test.domain;
 
 import java.util.Date;
-
+import java.util.List;
 import java.text.SimpleDateFormat;
 
 public class BoardVO {
@@ -20,10 +20,14 @@ public class BoardVO {
 	private Integer reply_bno;
 	private Integer reply_lv;
 	private Integer parent_bno;
-	
+
 	private Integer count_cno;
 
 	private Integer upload_file;
+
+	private List<UploadVO> uploadVOs;
+
+	private List<String> deleteFiles;
 
 	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -72,7 +76,7 @@ public class BoardVO {
 	}
 
 	public void setRegdate(Date regdate) {
-		this.regdate =SDF.format(regdate);
+		this.regdate = SDF.format(regdate);
 	}
 
 	public Integer getViewcnt() {
@@ -115,14 +119,6 @@ public class BoardVO {
 		this.parent_bno = parent_bno;
 	}
 
-	public Integer getUpload_file() {
-		return upload_file;
-	}
-
-	public void setUpload_file(Integer upload_file) {
-		this.upload_file = upload_file;
-	}
-	
 	public Integer getCount_cno() {
 		return count_cno;
 	}
@@ -131,12 +127,36 @@ public class BoardVO {
 		this.count_cno = count_cno;
 	}
 
+	public Integer getUpload_file() {
+		return upload_file;
+	}
+
+	public void setUpload_file(Integer upload_file) {
+		this.upload_file = upload_file;
+	}
+
+	public List<UploadVO> getUploadVOs() {
+		return uploadVOs;
+	}
+
+	public void setUploadVOs(List<UploadVO> uploadVOs) {
+		this.uploadVOs = uploadVOs;
+	}
+
+	public List<String> getDeleteFiles() {
+		return deleteFiles;
+	}
+
+	public void setDeleteFiles(List<String> deleteFiles) {
+		this.deleteFiles = deleteFiles;
+	}
+
 	@Override
 	public String toString() {
 		return "BoardVO [rno=" + rno + ", bno=" + bno + ", title=" + title + ", content=" + content + ", writer="
 				+ writer + ", regdate=" + regdate + ", viewcnt=" + viewcnt + ", ref_bno=" + ref_bno + ", reply_bno="
 				+ reply_bno + ", reply_lv=" + reply_lv + ", parent_bno=" + parent_bno + ", count_cno=" + count_cno
-				+ ", upload_file=" + upload_file + "]";
+				+ ", upload_file=" + upload_file + ", uploadVOs=" + uploadVOs + ", deleteFiles=" + deleteFiles + "]";
 	}
-
+	
 }

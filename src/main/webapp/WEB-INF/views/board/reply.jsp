@@ -28,6 +28,11 @@
 		
 		init(data); // reply.js : 초기화
 		
+		$('#add_file').click(function() {
+			var addFile = "<input type='file' class='uploadFile btn btn-default' name='uploadFile' class='form-control'>";
+			$('.fileform').append(addFile);
+			return false;
+		});
 	});
 	
 	
@@ -55,10 +60,14 @@
 					<input type='hidden' id='sendMsg' name='sendMsg' value="${sendMsg}">
 				
 					<div class="box-body">
-						<div class="form-group">
+					
+						<div class="fileform form-group">
 							<label for="exampleInputEmail1">첨부파일</label>
-								<input type="file" id="uploadFile" name='uploadFile' class="form-control">
+							<input type="file" class="uploadFile btn btn-default" name='uploadFile' class="form-control">
+<!-- 							<s>추가파일</button> -->
 						</div>
+							<button id="add_file" class="btn btn-primary btn-xs">+</button>
+						
 						<div class="form-group">
 							<label for="exampleInputEmail1">Title</label> 
 							<input type="text" id="title" name='title' class="form-control" required="required" autofocus="autofocus" placeholder="제목" value="${boardVO.title}">

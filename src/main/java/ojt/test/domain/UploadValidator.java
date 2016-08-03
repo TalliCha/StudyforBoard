@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UploadValidator implements Validator {
 
@@ -21,10 +22,13 @@ public class UploadValidator implements Validator {
 		UploadVO vo = (UploadVO) obj;
 
 		StringBuffer msg = new StringBuffer();
-		if (vo.getUploadFile().getSize() > MAX_FILESIZE) {
-			msg.append("err_maxFileSize ,");
-			errors.rejectValue("fsize", "err_maxFileSize");
-		}
+//		
+//		for (MultipartFile file : vo.getUploadFiles() ) {
+//			if (file.getSize() > MAX_FILESIZE ){
+//				msg.append("err_maxFileSize ,");
+//				errors.rejectValue("uploadFiles", "err_maxFileSize");
+//			}
+//		}
 
 		logger.info("uploadValidation : {}", msg.toString());
 	}

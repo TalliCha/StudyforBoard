@@ -27,6 +27,12 @@
 // 		alert(data.sendMsg.val());
 		init(data); // write.js : 초기화
 		
+		$('#add_file').click(function() {
+			var addFile = "<input type='file' class='uploadFile btn btn-default' name='uploadFile' class='form-control'>";
+			$('.fileform').append(addFile);
+			return false;
+		});
+		
 	});
 	
 </script>
@@ -53,10 +59,12 @@
 				
 					<div class="box-body">
 					
-						<div class="form-group">
+						<div class="fileform form-group">
 							<label for="exampleInputEmail1">첨부파일</label>
-							<input type="file" id="uploadFile" name='uploadFile' class="form-control">
+							<input type="file" class="uploadFile btn btn-default" name='uploadFile' class="form-control">
+<!-- 							<s>추가파일</button> -->
 						</div>
+							<button id="add_file" class="btn btn-primary btn-xs">+</button>
 						<div class="form-group">
 							<label for="exampleInputEmail1">Title</label> 
 							<input type="text" id="title" name='title' class="form-control" required="required" autofocus="autofocus" value="" placeholder="Enter Title">

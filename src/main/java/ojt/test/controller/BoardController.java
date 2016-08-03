@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ojt.test.domain.BoardVO;
@@ -29,7 +31,6 @@ import ojt.test.domain.CommentVO;
 import ojt.test.domain.ConVO;
 import ojt.test.domain.ConValidator;
 import ojt.test.domain.UploadVO;
-import ojt.test.domain.UploadValidator;
 import ojt.test.service.BoardService;
 
 @Controller
@@ -95,13 +96,14 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/board/create", method = RequestMethod.POST)
-	public String create(HttpServletRequest request, @Valid BoardVO boVO, BindingResult boResult, ConVO conVO,
-			@Valid UploadVO upVO, BindingResult upResult, Model model, RedirectAttributes redirectAttr)
-			throws Exception {
+	public String create(MultipartHttpServletRequest request, @Valid BoardVO boVO, BindingResult boResult, ConVO conVO,
+			UploadVO upVO, Model model, RedirectAttributes redirectAttr) throws Exception {
 		logger.info("[CREATE_POST: content page.]");
 		logger.info("BoardVO : {}", boVO);
 		logger.info("ConVO : {}", conVO);
 		logger.info("UploadVO : {}", upVO);
+
+		List<MultipartFile> file_list = ((MultipartHttpServletRequest) request).getFiles("uploadFile");
 
 		// 주의할점
 		// MultipartResolver는 파일이 업로드 되지 않을 경우 null 을 리턴하는 것이 아니라 "" (공백) 을 리턴
@@ -109,11 +111,8 @@ public class BoardController {
 		if (boResult.hasErrors()) {
 			model.addAttribute("sendMsg", "hasErr");
 			return "/board/write";
-		} else if (upResult.hasErrors()) {
-			model.addAttribute("sendMsg", "fileErr");
-			return "/board/write";
 		} else {
-			service.create(boVO, upVO);
+			service.create(boVO, upVO, file_list);
 			redirectAttr.addFlashAttribute("conVO", conVO);
 			return "redirect:/board/page?bno=" + boVO.getBno();
 		}
@@ -124,16 +123,19 @@ public class BoardController {
 		logger.info("[MODIFY_POST: content page.]");
 		logger.info("BoardVO : {}", boVO);
 		logger.info("ConVO : {}", conVO);
+		
 		return "/board/reply";
 	}
 
 	@RequestMapping(value = "/board/replycreate", method = RequestMethod.POST)
-	public String replyCreate( @Valid BoardVO boVO, BindingResult boResult, ConVO conVO, UploadVO upVO, Model model,
-			RedirectAttributes redirectAttr) throws Exception {
+	public String replyCreate(HttpServletRequest request, @Valid BoardVO boVO, BindingResult boResult, ConVO conVO,
+			UploadVO upVO, Model model, RedirectAttributes redirectAttr) throws Exception {
 		logger.info("[REPLYCREATE_POST: content page ]");
 		logger.info("BoardVO : {}", boVO);
 		logger.info("ConVO : {}", conVO);
 		logger.info("UploadVO : {}", upVO);
+
+		List<MultipartFile> file_list = ((MultipartHttpServletRequest) request).getFiles("uploadFile");
 
 		// 주의할점
 		// MultipartResolver는 파일이 업로드 되지 않을 경우 null 을 리턴하는 것이 아니라 "" (공백) 을 리턴
@@ -141,9 +143,8 @@ public class BoardController {
 		if (boResult.hasErrors()) {
 			model.addAttribute("sendMsg", "hasErr");
 			return "/board/reply";
-
 		} else {
-			service.replyCreate(boVO, upVO);
+			service.replyCreate(boVO, upVO, file_list);
 			redirectAttr.addFlashAttribute("conVO", conVO);
 			return "redirect:/board/page?bno=" + boVO.getBno();
 		}
@@ -158,7 +159,7 @@ public class BoardController {
 		logger.info("UploadVO : {}", upVO);
 
 		service.viewCount(boVO); // 글자 조회 1추가
-		service.viewContent(boVO, upVO);
+		service.viewContent(boVO);
 		return "/board/page";
 	}
 
@@ -170,19 +171,18 @@ public class BoardController {
 		logger.info("UploadVO : {}", upVO);
 
 		service.viewCount(boVO); // 글자 조회 1추가
-		service.viewContent(boVO, upVO);
+		service.viewContent(boVO);
 
 		return "/board/page";
 	}
 
 	@RequestMapping(value = "/board/delete", method = RequestMethod.POST)
-	public String delete(BoardVO boVO, UploadVO upVO, ConVO conVO, RedirectAttributes redirectAttr) throws Exception {
+	public String delete(BoardVO boVO, ConVO conVO, RedirectAttributes redirectAttr) throws Exception {
 		logger.info("[DELETE_POST: content page.]");
 		logger.info("BoardVO : {}", boVO);
 		logger.info("ConVO : {}", conVO);
-		logger.info("UploadVO : {}", upVO);
 
-		service.delete(boVO, upVO);
+		service.delete(boVO);
 
 		logger.info("delete: action.{}", "삭제 함");
 		redirectAttr.addFlashAttribute("sendMsg", "delSucc");
@@ -196,16 +196,20 @@ public class BoardController {
 		logger.info("BoardVO : {}", boVO);
 		logger.info("ConVO : {}", conVO);
 		logger.info("UploadVO : {}", upVO);
+		
+		service.viewContent(boVO);
+		
 		return "/board/modify";
 	}
 
 	@RequestMapping(value = "/board/update", method = RequestMethod.POST)
-	public String update(@Valid BoardVO boVO, BindingResult boResult, ConVO conVO, UploadVO upVO, Model model,
-			RedirectAttributes redirectAttr) throws Exception {
+	public String update(MultipartHttpServletRequest request, @Valid BoardVO boVO, BindingResult boResult, ConVO conVO,
+			UploadVO upVO, Model model, RedirectAttributes redirectAttr) throws Exception {
 		logger.info("[UPDATE_POST: content page.]");
 		logger.info("BoardVO : {}", boVO);
 		logger.info("ConVO : {}", conVO);
-		logger.info("UploadVO : {}", upVO);
+
+		List<MultipartFile> file_list = ((MultipartHttpServletRequest) request).getFiles("uploadFile");
 
 		// 주의할점
 		// MultipartResolver는 파일이 업로드 되지 않을 경우 null 을 리턴하는 것이 아니라 "" (공백) 을 리턴
@@ -214,17 +218,16 @@ public class BoardController {
 			model.addAttribute("sendMsg", "hasErr");
 			return "/board/modify";
 		} else {
-			service.update(boVO, upVO);
+			service.update(boVO, upVO, file_list);
 			redirectAttr.addFlashAttribute("conVO", conVO);
 			return "redirect:/board/page?bno=" + boVO.getBno();
 		}
 	}
-	
+
 	/* Comment */
 
 	@RequestMapping(value = "/board/comm_create", method = RequestMethod.POST)
-	public @ResponseBody boolean comm_create(@Valid CommentVO commVO, BindingResult commResult )
-			throws Exception {
+	public @ResponseBody boolean comm_create(@Valid CommentVO commVO, BindingResult commResult) throws Exception {
 		logger.info("[COMM_CREATE_POST: content page.]");
 		logger.info("CommentVO : {}", commVO);
 
@@ -237,8 +240,7 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/board/comm_replycreate", method = RequestMethod.POST)
-	public @ResponseBody boolean comm_replyCreate(@Valid CommentVO commVO, BindingResult commResult )
-			throws Exception {
+	public @ResponseBody boolean comm_replyCreate(@Valid CommentVO commVO, BindingResult commResult) throws Exception {
 		logger.info("[COMM_REPLYCREATE_POST: content page ]");
 		logger.info("CommentVO : {}", commVO);
 
@@ -251,8 +253,7 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/board/comm_update", method = RequestMethod.POST)
-	public @ResponseBody boolean comm_update(@Valid CommentVO commVO, BindingResult commResult )
-			throws Exception {
+	public @ResponseBody boolean comm_update(@Valid CommentVO commVO, BindingResult commResult) throws Exception {
 		logger.info("[COMM_UPDATE_POST: content page.]");
 		logger.info("CommentVO : {}", commVO);
 
@@ -265,17 +266,17 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/board/comm_delete", method = RequestMethod.POST)
-	public @ResponseBody boolean comm_delete( CommentVO commVO) throws Exception {
+	public @ResponseBody boolean comm_delete(CommentVO commVO) throws Exception {
 		logger.info("[COMM_DELETE_POST: content page.]");
 		logger.info("CommentVO : {}", commVO);
-		
+
 		service.comm_delete(commVO);
 		logger.info("comm_delete: action.{}", "삭제 함");
 		return true;
 	}
 
 	@RequestMapping(value = "/board/comm_MaxPage", method = RequestMethod.POST)
-	public @ResponseBody ConVO comm_getMaxPage( ConVO conVO ) throws Exception {
+	public @ResponseBody ConVO comm_getMaxPage(ConVO conVO) throws Exception {
 		logger.info("[GETMAXCOUNT_POST: getMaxCount.]");
 		logger.info("ConVO : {}", conVO);
 
@@ -283,7 +284,7 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/board/getCommentList", method = RequestMethod.POST)
-	public @ResponseBody List<CommentVO> getComment(@Valid ConVO conVO, BindingResult commResult ) throws Exception {
+	public @ResponseBody List<CommentVO> getComment(@Valid ConVO conVO, BindingResult commResult) throws Exception {
 		logger.info("[GETLIST_POST: comment list.]");
 		logger.info("ConVO : {}", conVO);
 
@@ -311,23 +312,25 @@ public class BoardController {
 		response.getOutputStream().flush();
 		response.getOutputStream().close();
 	}
-	
+
 	@RequestMapping(value = "/excelDownload")
-	public String excelDownload( @Valid ConVO vo, BindingResult conResult,  Model model, HttpServletResponse response) throws Exception {
+	public String excelDownload(@Valid ConVO vo, BindingResult conResult, Model model, HttpServletResponse response)
+			throws Exception {
 		System.out.println(vo);
-		
+
 		List<BoardVO> getList = service.getList(vo);
 		model.addAttribute("getList", getList);
-		
+
 		return "excelView";
 	}
-	
+
 	@RequestMapping(value = "/comm_ExcelDownload")
-	public String comm_ExcelDownload( @Valid ConVO vo, BindingResult conResult,  Model model, HttpServletResponse response) throws Exception {
-//		System.out.println(vo);
+	public String comm_ExcelDownload(@Valid ConVO vo, BindingResult conResult, Model model,
+			HttpServletResponse response) throws Exception {
+		// System.out.println(vo);
 		vo.setMaxPage(service.comm_getMaxPage(vo).getMaxPage());
 		model.addAttribute("getList", service.comm_viewList(vo));
-		
+
 		return "excelView";
 	}
 
@@ -340,9 +343,7 @@ public class BoardController {
 			binder.setValidator(new BoardValidator());
 		} else if (obj instanceof ConVO) {
 			binder.setValidator(new ConValidator());
-		} else if (obj instanceof UploadVO) {
-			binder.setValidator(new UploadValidator());
-		} else if (obj instanceof CommentVO){
+		} else if (obj instanceof CommentVO) {
 			binder.setValidator(new CommValidator());
 		}
 	}

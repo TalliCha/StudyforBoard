@@ -3,6 +3,7 @@ package ojt.test.domain;
 import org.springframework.web.multipart.MultipartFile;
 
 public class UploadVO {
+	private MultipartFile file;
 	private int fno;
 	private int bno;
 	private String original_fname;
@@ -10,8 +11,14 @@ public class UploadVO {
 	private Long fsize;
 	private String ftype;
 	
-	private MultipartFile uploadFile;
+	public MultipartFile getFile() {
+		return file;
+	}
 
+	public void setFile(MultipartFile file) {
+		this.file = file;
+	}
+	
 	public int getFno() {
 		return fno;
 	}
@@ -59,19 +66,19 @@ public class UploadVO {
 	public void setFtype(String ftype) {
 		this.ftype = ftype;
 	}
-
-	public MultipartFile getUploadFile() {
-		return uploadFile;
-	}
-
-	public void setUploadFile(MultipartFile uploadFile) {
-		this.uploadFile = uploadFile;
+	
+	public void setAll(MultipartFile file) {
+		this.file = file;
+		this.original_fname = file.getOriginalFilename();
+		this.upload_fname = file.getName();
+		this.fsize = file.getSize();
+		this.ftype = file.getContentType();
 	}
 
 	@Override
 	public String toString() {
-		return "UploadVO [fno=" + fno + ", bno=" + bno + ", original_fname=" + original_fname + ", upload_fname="
-				+ upload_fname + ", fsize=" + fsize + ", ftype=" + ftype + ", uploadFile=" + uploadFile + "]";
+		return "UploadVO [file=" + file + ", fno=" + fno + ", bno=" + bno + ", original_fname=" + original_fname
+				+ ", upload_fname=" + upload_fname + ", fsize=" + fsize + ", ftype=" + ftype + "]";
 	}
 
 }

@@ -36,13 +36,13 @@ function init(data) {
 
 		console.log(formObj);
 		
-		$(".btn-danger").click( function() {
+		$("#btn_cancel").click( function() {
 			formObj.attr("method", "post");
 			formObj.attr("action", "/board/page?bno="+ data.bno.val() ); // CANCEL :  pagePOST 페이지로 이동
 			formObj.submit();
 		});
 		
-		$(".btn-primary").click(function() {
+		$("#btn_golist").click(function() {
 			com_btn_cancle_action(data); // go list 버튼 처리
 		});
 	}

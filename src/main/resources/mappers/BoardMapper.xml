@@ -171,8 +171,13 @@
 			,tb.ref_bno
 			,tb.reply_bno
 			,tb.reply_lv
-			,tb.upload_file
 			,tb.parent_bno
+			,(SELECT
+		    	COUNT(fno)
+	    	 FROM
+	    	 	tbl_upload
+	       	 WHERE
+	       	 	bno = tb.bno ) upload_file
 		    ,(SELECT
 		    	COUNT(cno)
 	    	 FROM
@@ -234,6 +239,14 @@
 	 	WHERE
 	 		bno = #{bno};
 	</update>
+	
+	<!-- upload 파일 삭제 -->
+	<delete id="deleteFile"> 
+		DELETE FROM
+			tbl_upload
+		WHERE
+			upload_fname = #{delete_upload_fname}
+	</delete>
 	
 	<!--  upload 파일 보기 -->
 	<select id="viewUpload" resultType="ojt.test.domain.UploadVO">

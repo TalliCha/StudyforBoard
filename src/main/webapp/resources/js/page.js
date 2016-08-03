@@ -1,6 +1,6 @@
 function init(data) {
 	
-	addUploadFile(data); // common.js : 파일 첨부 보기
+//	addUploadFile(data); // common.js : 파일 첨부 보기
 	
 	addDeleteMSG(data); // util.js : 삭제 메세지 경고창
 	

@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <%@include file="../include/header.jsp"%>
 
@@ -94,6 +96,8 @@ $(document).ready(function() {
     text-overflow: ellipsis;
     position: relative;
     float: left;
+    
+    
 
 }
 
@@ -163,26 +167,33 @@ $(document).ready(function() {
 					<input type='hidden' name='reply_bno' value="${boardVO.reply_bno}">
 					<input type='hidden' name='reply_lv' value="${boardVO.reply_lv}">
 					
-					
-					<!-- uploadVO parameters  -->
-					<input type='hidden' id="fno" name='fno' value="${uploadVO.fno}">
-					<input type='hidden' id="original_fname" name='original_fname' value="${uploadVO.original_fname}">
-					<input type='hidden'  id="upload_fname" name='upload_fname' value="${uploadVO.upload_fname}">
-					<input type='hidden'  id="fsize" name='fsize' value="${uploadVO.fsize}">
-					<input type='hidden' id="ftype" name='ftype' value="${uploadVO.ftype}">
-					
 				</form>
 
 				<div class="box-body">
 					<div class="form-group">
 						<label for="exampleInputEmail1">첨부파일</label>
-							<div class="input-group">
-									<span id="upload_name" class="input-group-addon"></span>
-          						    <span class="input-group-addon">SIZE</span>
-             					    <input type="text" class="form-control" value="${uploadVO.fsize} bytes" readonly="readonly">
-             					       <span class="input-group-addon">TYPE</span>
-             					    <input type="text" class="form-control" value="${uploadVO.ftype}" readonly="readonly">
-         				     </div>
+						<c:choose>
+							 <c:when test="${boardVO.uploadVOs eq '[]' }">
+							   <div class="input-group">
+			    						<span class="input-group-addon">첨부파일이 없습니다.</span>
+	       				     	</div>
+							 </c:when>
+							 <c:otherwise>
+							    <c:forEach var="file" items="${boardVO.uploadVOs}" varStatus="status">
+									<div style="width: 100%;" class="input-group">
+										<a style="width: 60%;" class="input-group-addon"
+											href="/downloadFile?upload_fname=${file.upload_fname}&original_fname=${file.original_fname}">
+											<c:out value='${file.original_fname}' />
+										</a>
+			    						<span class="input-group-addon" style="width:5%;">SIZE</span>
+			         					<input type="text"  class="form-control" value="	<c:out value='${file.fsize}' /> bytes" readonly="readonly">
+			       					    <span class="input-group-addon" style="width: 5%;">TYPE</span>
+			          					<input type="text" class="form-control" value="	<c:out value='${file.ftype}' />" readonly="readonly">
+		       				     	</div>
+							    </c:forEach>
+							 </c:otherwise>
+						</c:choose>
+						
 					</div>
 						<div class="form-group">
 						<label for="exampleInputEmail1">BNO</label>
@@ -219,7 +230,6 @@ $(document).ready(function() {
 			
 				<div class="box-footer"> <!-- 댓글 새로 입력하기  -->
 				<h2>댓글<small>-댓글로 소통하세요-</small></h2> 
-<!-- 				<a href="/comm_ExcelDownload">엑셀 다운로드</a> -->
 					<form method="post">
 						<input type="hidden" name="bno" value="${boardVO.bno}">
 						<div>

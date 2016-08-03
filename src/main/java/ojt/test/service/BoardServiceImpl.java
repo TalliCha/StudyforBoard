@@ -7,6 +7,8 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ojt.test.domain.BoardVO;
 import ojt.test.domain.CommentVO;
@@ -16,55 +18,71 @@ import ojt.test.persistence.BoardDAO;
 
 @Service
 public class BoardServiceImpl implements BoardService {
-	
-	
+
 	private static final String UPLOAD_PATH = "c:/upload";
 
 	@Inject
 	private BoardDAO dao;
 
 	@Override
-	public void create(BoardVO boVO, UploadVO upVO) throws Exception {
+	public void create(BoardVO boVO, UploadVO upVO, List<MultipartFile> file_list) throws Exception {
 
 		dao.create(boVO);
 
-		if (!upVO.getUploadFile().isEmpty()) { // 첨부 파일이 존재 할때
-			upload(boVO, upVO); // 파일 처리
-			dao.upload(upVO); // DB에 파일 기록 수정
-			dao.uploadCount(boVO); // 파일 갯수 갱신
+		for (MultipartFile file : file_list) {
+
+			if (!file.getOriginalFilename().equals("")) {
+				upload(boVO, upVO, file); // 파일 처리
+				dao.upload(upVO); // DB에 파일 기록 수정
+			}
 		}
+		dao.uploadCount(boVO); // 파일 갯수 갱신
 
 	}
 
 	@Override
-	public void replyCreate(BoardVO boVO, UploadVO upVO) throws Exception {
+	public void replyCreate(BoardVO boVO, UploadVO upVO, List<MultipartFile> file_list) throws Exception {
 		dao.replyCreate(boVO);
 
-		if (!upVO.getUploadFile().isEmpty()) { // 첨부 파일이 존재 할때
-			upload(boVO, upVO); // 파일 처리
-			dao.upload(upVO); // DB에 파일 기록 수정
-			dao.uploadCount(boVO); // 파일 갯수 갱신
+		for (MultipartFile file : file_list) {
+
+			if (!file.getOriginalFilename().equals("")) {
+				upload(boVO, upVO, file); // 파일 처리
+				dao.upload(upVO); // DB에 파일 기록 수정
+			}
 		}
+		dao.uploadCount(boVO); // 파일 갯수 갱신
+
 	}
 
 	@Override
-	public void update(BoardVO boVO, UploadVO upVO) throws Exception {
+	public void update(BoardVO boVO, UploadVO upVO, List<MultipartFile> file_list) throws Exception {
 		dao.update(boVO);
 
-		if (!upVO.getUploadFile().isEmpty() ) { // 첨부 파일이 존재 할때
-			upload(boVO, upVO); // 파일 처리
-			
-			if (upVO.getFno()==0) {  
-				dao.upload(upVO); // 이전 파일이 존재 안할때 DB에 파일 기록 추가
-			}else{
-				dao.uploadModify(upVO); // 파일이 존재 할때 ,DB에 파일 기록 수정
+		System.out.println("########" + boVO.getDeleteFiles());
+		// 체크된 파일 지우기
+		if (boVO.getDeleteFiles() != null) {
+
+			for (String delete_upload_fname : boVO.getDeleteFiles()) {
+				File upload_file = new File(UPLOAD_PATH + "/" + delete_upload_fname);
+				if (upload_file.exists()) {
+					upload_file.delete();
+				}
+				dao.deleteFile(delete_upload_fname);
 			}
-			
-			dao.uploadCount(boVO); // 파일 갯수 갱신
 		}
+
+		for (MultipartFile file : file_list) {
+
+			if (!file.getOriginalFilename().equals("")) {
+				upload(boVO, upVO, file); // 파일 처리
+				dao.upload(upVO); // DB에 파일 기록 수정
+			}
+		}
+		dao.uploadCount(boVO); // 파일 갯수 갱신
 	}
 
-	private void upload(BoardVO boVO, UploadVO upVO) throws Exception {
+	private void upload(BoardVO boVO, UploadVO upVO, MultipartFile file) throws Exception {
 
 		// String path =
 		// request.getSession().getServletContext().getRealPath("resources/"+boVO.getFname()
@@ -75,39 +93,41 @@ public class BoardServiceImpl implements BoardService {
 		if (!dir.isDirectory()) {
 			dir.mkdirs();
 		}
-		
-		deleteFile(upVO);  	// 이전 파일 삭제
 
-		uploadVoSetting(boVO, upVO); // upVO 세팅
+		uploadVoSetting(boVO, upVO, file); // upVO 세팅
+
+		System.out.println(upVO.toString());
 
 		// 파일저장
-		upVO.getUploadFile().transferTo(new File(UPLOAD_PATH + "/" + upVO.getUpload_fname()));
+		file.transferTo(new File(UPLOAD_PATH + "/" + upVO.getUpload_fname()));
 
 	}
 
-	private void uploadVoSetting(BoardVO boVO, UploadVO upVO) {
+	private void uploadVoSetting(BoardVO boVO, UploadVO upVO, MultipartFile file) {
 		upVO.setBno(boVO.getBno());
-		upVO.setFtype(upVO.getUploadFile().getContentType());
-		upVO.setOriginal_fname(upVO.getUploadFile().getOriginalFilename());
-		upVO.setUpload_fname(UUID.randomUUID().toString() + "_" + upVO.getUploadFile().getOriginalFilename());
-		upVO.setFsize(upVO.getUploadFile().getSize());
+		upVO.setOriginal_fname(file.getOriginalFilename());
+		upVO.setUpload_fname(UUID.randomUUID().toString() + "_" + file.getOriginalFilename());
+		upVO.setFsize(file.getSize());
+		upVO.setFtype(file.getContentType());
 	}
-	
-	private void deleteFile( UploadVO upVO) {
-		if(upVO.getFno() != 0){
-			File upload_file = 	new File(UPLOAD_PATH + "/" + upVO.getUpload_fname());
-			if(upload_file.exists()){
-				upload_file.delete();
+
+	private void deleteFile(BoardVO boVO) throws Exception {
+
+		boVO.setUploadVOs(dao.viewUpload_file(boVO)); // 파일 리스트 저장
+		if (boVO.getUploadVOs() != null) { // 파일이 존재하면 삭제하기
+			for (UploadVO file : boVO.getUploadVOs()) {
+				File upload_file = new File(UPLOAD_PATH + "/" + file.getUpload_fname());
+				if (upload_file.exists()) {
+					upload_file.delete();
+				}
 			}
 		}
 	}
 
 	@Override
-	public void viewContent(BoardVO boVO, UploadVO upVO) throws Exception {
+	public void viewContent(BoardVO boVO) throws Exception {
 		dao.viewContent(boVO);
-		if (boVO.getUpload_file() > 0) {
-			dao.viewUpload_file(boVO, upVO);
-		}
+		boVO.setUploadVOs(dao.viewUpload_file(boVO)); // 파일 리스트 저장
 	}
 
 	@Override
@@ -116,18 +136,18 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public void delete(BoardVO boVO, UploadVO upVO) throws Exception {
-		
-		dao.delete( boVO );  // 파일 지우기
-		dao.deleteChildLink( boVO );  // 자식들의 부모 링크 삭제
-		deleteFile( upVO );
-		dao.uploadCount(boVO); // 파일 갯수 갱신
-		
+	public void delete(BoardVO boVO) throws Exception {
+
+		deleteFile(boVO); // 1. 로컬에 저장된 파일 지우기 -- 순서 중요.
+		dao.delete(boVO); // 2. 파일 지우기
+		dao.deleteChildLink(boVO); // 3. 자식들의 부모 링크 삭제
+		dao.uploadCount(boVO); // 4. 파일 갯수 갱신
+
 	}
 
 	@Override
 	public List<BoardVO> getList(ConVO vo) throws Exception {
-		
+
 		return dao.getList(vo);
 	}
 
@@ -144,20 +164,20 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public void comm_replyCreate(CommentVO commVO) throws Exception {
 		dao.comm_replyCreate(commVO);
-		
+
 	}
 
 	@Override
 	public void comm_update(CommentVO commVO) throws Exception {
 		dao.comm_update(commVO);
-		
+
 	}
 
 	@Override
 	public void comm_delete(CommentVO commVO) throws Exception {
-		dao.comm_delete(commVO);  // 댓글 지우기
-		dao.comm_deleteChildLink(commVO);  // 자식들의 부모 링크 삭제
-		
+		dao.comm_delete(commVO); // 댓글 지우기
+		dao.comm_deleteChildLink(commVO); // 자식들의 부모 링크 삭제
+
 	}
 
 	@Override

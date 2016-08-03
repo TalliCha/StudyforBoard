@@ -26,14 +26,14 @@ function addUploadFile(data) {
 }
 
 function add_upload_Validation( ) {
-	$("#uploadFile").change(function() {
-		
+	$(".uploadFile").change(function() {
+//		alert(1);
 		var file_size = Math.ceil( this.files[0].size / 1024 / 1024 * 10 )/10;
 //		alert(file_size);
 		if (file_size > 10) {
 			alert ('10메가가 넘는 파일은 첨부 할수 없습니다.');
 			
-			$('#uploadFile').val('');
+			$(this).val('');
 		}
 	});
 }
