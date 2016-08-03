@@ -114,10 +114,9 @@ public class ExcelBuilder extends AbstractExcelView {
 				title = "▶"+title;
 			}
 			
-			String upload_file = "";
-			if( getList.get(i).getUpload_file() > 0 ){
-				upload_file = "있음";
-			}
+			
+			
+			Integer upload_file = (getList.get(i).getUpload_file() == null) ?  0 : getList.get(i).getUpload_file() ;
 			
 			Integer viewCnt = getList.get(i).getViewcnt();
 			

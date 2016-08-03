@@ -300,7 +300,9 @@ function addList(data,list) {
 			contentTab += "<span class='text-red' style='font-size: x-small;'> --원글이 삭제된 답변입니다-- </span>";
 		}
 		
-		content = contentTab+" <br> "+"<textarea id='"+list[idx].cno+"' class=' content_box no_border' type='text' readonly='readonly' style='resize:none; width:70%; overflow:visible; '>"+list[idx].content+"</textarea>" ;
+		contentTab = (list[idx].reply_lv == 0 )? contentTab : contentTab +"<br>";
+		
+		content = contentTab+"<textarea id='"+list[idx].cno+"' class=' content_box no_border' type='text' readonly='readonly' style='resize:none; width:70%; overflow:visible; '>"+list[idx].content+"</textarea>" ;
 		
 		if(data.cno == list[idx].cno ){
 			add_btns += sumit_btn +cancel_btn + delete_btn +modify_btn  + reply_btn;
@@ -321,6 +323,7 @@ function addList(data,list) {
 										+"<div class='form-group'>"
 											+"<label for='exampleInputEmail1'>작성자</label> <br>"
 											+"<input type='text' id='writer"+list[idx].cno+"' class='writer_box' name='writer' placeholder='이름' required='required'>"
+											+"<input type='text' style='display: none;' />"
 											+"<span id='writer"+list[idx].cno+"Length'></span>"
 										+"</div>"
 									+"</div>"

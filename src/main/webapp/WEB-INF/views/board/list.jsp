@@ -26,8 +26,9 @@
 	margin: 0 auto;
 }
 
-#boardList tr{
-	display:  inline;  
+#boardList tr {
+
+/* 	display:  inline;   */
 	text-align: center;
 	vertical-align: middle;
 }
@@ -194,7 +195,7 @@
 								</div>
 							</div>
 						</div>
-							<table id="boardList" class="table table-bordered">
+							<table id="boardList" class="table table-hover">
 							</table>
 	
 					</div>

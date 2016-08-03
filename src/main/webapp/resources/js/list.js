@@ -199,7 +199,7 @@
 			}
 			
 			
-			var row = "<tr valign='middle'>" + "<td>" + list[idx].rno + "</td>" + "<td title='"+list[idx].title+"'>"	
+			var row = "<tr>" + "<td>" + list[idx].rno + "</td>" + "<td title='"+list[idx].title+"'>"	
 					+ linkNm + "</td>" + "<td title='"+list[idx].writer+"'>" + list[idx].writer + "</td>"
 					+ "<td>" + list[idx].regdate + "</td>"
 					+ "<td><span class='badge bg-red'>" + list[idx].viewcnt

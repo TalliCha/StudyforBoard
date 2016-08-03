@@ -32,6 +32,7 @@
 		$('#add_file').click(function() {
 			var addFile = "<input type='file' class='uploadFile btn btn-default' name='uploadFile' class='form-control'>";
 			$('.fileform').append(addFile);
+			add_upload_Validation(); // common.js : 파일 첨부 용량 체크
 			return false;
 		});
 		

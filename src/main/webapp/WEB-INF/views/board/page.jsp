@@ -243,6 +243,7 @@ $(document).ready(function() {
 							<div class="form-group">
 								<label for="exampleInputEmail1">작성자</label> <br>
 								<input type="text" id="writer" class="writer_box" name="writer" placeholder="이름" required="required">
+								<input type='text' style='display: none;' />
 								<span id="writerLength"></span>
 							</div>
 						</div>
@@ -263,7 +264,7 @@ $(document).ready(function() {
 		                </div>
 				<div id="comment" class="box-footer">
 					<span id="maxContent">전체 댓글 0:개</span>
-						<table id="comm_list" class="table table-bordered">
+						<table id="comm_list" class="table table-hover">
 						</table>
 					<div class="text-center">
 						<ul class="pagination">
