@@ -207,7 +207,6 @@ public class BoardController {
 		logger.info("[CON_POST] /board/update:: update content.");
 		logger.info("	ConVO : {}", conVO);
 		logger.info("	BoardVO : {}", boVO);
-
 		List<MultipartFile> file_list = ((MultipartHttpServletRequest) request).getFiles("uploadFile");
 
 		// 주의할점

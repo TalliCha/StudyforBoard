@@ -28,11 +28,16 @@
 		init(data); // write.js : 초기화
 		
 		$('#add_file').click(function() {
-			var addFile = "<input type='file' class='uploadFile btn btn-default' name='uploadFile' class='form-control'>";
-			$('.fileform').append(addFile);
-			
-			add_upload_Validation(); // common.js : 파일 첨부 용량 체크
-			return false;
+			var count = $('.uploadFile').length;
+// 			alert(count);
+			if (count < 10) {
+				var addFile = "<input type='file' class='uploadFile btn btn-default' name='uploadFile' class='form-control'>";
+				$('.fileform').append(addFile);
+				add_upload_Validation(); // common.js : 파일 첨부 용량 체크
+			}else{
+				alert('파일 10개 넘게는 파일 첨부 추가 할 수 없습니다.');	
+			}
+			return false;	
 		});
 		
 	});

@@ -30,10 +30,24 @@
 		init(data); // modify.js : 초기화
 		
 		$('#add_file').click(function() {
-			var addFile = "<input type='file' class='uploadFile btn btn-default' name='uploadFile' class='form-control'>";
-			$('.fileform').append(addFile);
-			add_upload_Validation(); // common.js : 파일 첨부 용량 체크
-			return false;
+			
+			// 삭제 일때의 개수를 파악하는 디자인으로 가면 추가 적으로 발생 하는 예외에 대한 조건 처리가 많아 짐
+			
+			var filesLength = $(".deleteFiles").length;
+			var delete_filesLength = $(".deleteFiles:checked").length; 
+// 			var files = filesLength - delete_filesLength;
+			var files = filesLength;
+// 			alert(files);
+			var count = files + $('.uploadFile').length;
+// 			alert(count);
+			if (count < 10) {
+				var addFile = "<input type='file' class='uploadFile btn btn-default' name='uploadFile' class='form-control'>";
+				$('.fileform').append(addFile);
+				add_upload_Validation(); // common.js : 파일 첨부 용량 체크
+			}else{
+				alert('파일 10개 넘게는 파일 첨부 추가 할 수 없습니다.');	
+			}
+			return false;	
 		});
 		
 	});

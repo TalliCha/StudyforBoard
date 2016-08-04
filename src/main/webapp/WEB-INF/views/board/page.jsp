@@ -36,7 +36,6 @@ $(document).ready(function() {
 			,writer : $('#writer')
 			
 			
-			
 			,contentMax : 400
 			,writerMax : 80
 	}
