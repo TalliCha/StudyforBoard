@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ojt.test.domain.BoardVO;
 import ojt.test.domain.CommentVO;
@@ -25,12 +24,12 @@ public class BoardServiceImpl implements BoardService {
 	private BoardDAO dao;
 
 	@Override
-	public void create(BoardVO boVO, UploadVO upVO, List<MultipartFile> file_list) throws Exception {
+	public void create(BoardVO boVO, List<MultipartFile> file_list) throws Exception {
 
 		dao.create(boVO);
 
 		for (MultipartFile file : file_list) {
-
+			UploadVO upVO = new UploadVO();
 			if (!file.getOriginalFilename().equals("")) {
 				upload(boVO, upVO, file); // 파일 처리
 				dao.upload(upVO); // DB에 파일 기록 수정
@@ -41,11 +40,11 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public void replyCreate(BoardVO boVO, UploadVO upVO, List<MultipartFile> file_list) throws Exception {
+	public void replyCreate(BoardVO boVO, List<MultipartFile> file_list) throws Exception {
 		dao.replyCreate(boVO);
 
 		for (MultipartFile file : file_list) {
-
+			UploadVO upVO = new UploadVO();
 			if (!file.getOriginalFilename().equals("")) {
 				upload(boVO, upVO, file); // 파일 처리
 				dao.upload(upVO); // DB에 파일 기록 수정
@@ -56,7 +55,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public void update(BoardVO boVO, UploadVO upVO, List<MultipartFile> file_list) throws Exception {
+	public void update(BoardVO boVO, List<MultipartFile> file_list) throws Exception {
 		dao.update(boVO);
 
 		System.out.println("########" + boVO.getDeleteFiles());
@@ -68,12 +67,12 @@ public class BoardServiceImpl implements BoardService {
 				if (upload_file.exists()) {
 					upload_file.delete();
 				}
-				dao.deleteFile(delete_upload_fname);
+				dao.deleteFile(delete_upload_fname); // DB 에 해당 파일 지우기
 			}
 		}
 
 		for (MultipartFile file : file_list) {
-
+			UploadVO upVO = new UploadVO();
 			if (!file.getOriginalFilename().equals("")) {
 				upload(boVO, upVO, file); // 파일 처리
 				dao.upload(upVO); // DB에 파일 기록 수정
@@ -93,10 +92,7 @@ public class BoardServiceImpl implements BoardService {
 		if (!dir.isDirectory()) {
 			dir.mkdirs();
 		}
-
 		uploadVoSetting(boVO, upVO, file); // upVO 세팅
-
-		System.out.println(upVO.toString());
 
 		// 파일저장
 		file.transferTo(new File(UPLOAD_PATH + "/" + upVO.getUpload_fname()));

@@ -7,12 +7,11 @@ import org.springframework.web.multipart.MultipartFile;
 import ojt.test.domain.BoardVO;
 import ojt.test.domain.CommentVO;
 import ojt.test.domain.ConVO;
-import ojt.test.domain.UploadVO;
 
 public interface BoardService {
-	public void create(BoardVO boVO, UploadVO upVO, List<MultipartFile> file_list) throws Exception;
-	public void replyCreate(BoardVO boVO, UploadVO upVO, List<MultipartFile> file_list) throws Exception;
-	public void update(BoardVO boVO, UploadVO upVO, List<MultipartFile> file_list) throws Exception;
+	public void create(BoardVO boVO, List<MultipartFile> file_list) throws Exception;
+	public void replyCreate(BoardVO boVO, List<MultipartFile> file_list) throws Exception;
+	public void update(BoardVO boVO, List<MultipartFile> file_list) throws Exception;
 
 	public void viewContent(BoardVO boVO) throws Exception;
 	public void viewCount(BoardVO vo) throws Exception;
