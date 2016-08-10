@@ -46,13 +46,15 @@ public class BoardController {
 		logger.info("[CON_GET] /:: move /board");
 		return "redirect:/board";
 	}
-
+	
+	/**/
 	@RequestMapping(value = "/board", method = RequestMethod.GET)
 	public String viewListGET(@Valid ConVO conVO, BindingResult conResult) {
 		logger.info("[CON_GET] /board: list page.");
 
 		if (conResult.hasErrors()) {
 			logger.info("	#set init: ConVO : {}", conVO);
+			
 		} else {
 
 			logger.info("	#get: ConVO : {}", conVO);
@@ -71,7 +73,8 @@ public class BoardController {
 		}
 		return "/board/list";
 	}
-
+	/**/
+	
 	@RequestMapping(value = "/board/getList", method = RequestMethod.POST)
 	public @ResponseBody List<BoardVO> getList(ConVO conVO, BindingResult conResult) throws Exception {
 		logger.info("[CON_POST] /board/getList:: get boardList.");

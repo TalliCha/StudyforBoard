@@ -185,9 +185,9 @@ $(document).ready(function() {
 											<c:out value='${file.original_fname}' />
 										</a>
 			    						<span class="input-group-addon" style="width:5%;">SIZE</span>
-			         					<input type="text"  class="form-control" value="	<c:out value='${file.fsize}' /> bytes" readonly="readonly">
+			         					<input title='fsize' type="text"  class="form-control" value="	<c:out value='${file.fsize}' /> bytes" readonly="readonly">
 			       					    <span class="input-group-addon" style="width: 5%;">TYPE</span>
-			          					<input type="text" class="form-control" value="	<c:out value='${file.ftype}' />" readonly="readonly">
+			          					<input title='ftype' type="text" class="form-control" value="	<c:out value='${file.ftype}' />" readonly="readonly">
 		       				     	</div>
 							    </c:forEach>
 							 </c:otherwise>
@@ -196,21 +196,21 @@ $(document).ready(function() {
 					</div>
 						<div class="form-group">
 						<label for="exampleInputEmail1">BNO</label>
-						<input type="text" name='bno' class="form-control" value="${boardVO.bno}" readonly="readonly">
+						<input title="bno" type="text" name='bno' class="form-control" value="${boardVO.bno}" readonly="readonly">
 					</div>
 				
 				
 					<div class="form-group">
 						<label for="exampleInputEmail1">Title</label>
-						<input type="text" name='title' class="form-control" value="${boardVO.title}" readonly="readonly">
+						<input title="title" type="text" name='title' class="form-control" value="${boardVO.title}" readonly="readonly">
 					</div>
 					<div class="form-group">
 						<label for="exampleInputPassword1">Content</label>
-						<textarea class="form-control" name="content" rows="20" readonly="readonly">${boardVO.content}</textarea>
+						<textarea title="content" class="form-control" name="content" rows="20" readonly="readonly">${ boardVO.content.replaceAll('<', '&#x003C;') }</textarea>
 					</div>
 					<div class="form-group">
 						<label for="exampleInputEmail1">Writer</label>
-						<input type="text" name="writer" class="form-control" value="${boardVO.writer}" readonly="readonly">
+						<input title="writer" type="text" name="writer" class="form-control" value="${boardVO.writer}" readonly="readonly">
 					</div>
 				</div>
 				<!-- /.box-body -->
@@ -234,15 +234,15 @@ $(document).ready(function() {
 						<div>
 							<div class="form-group">
 								<label for="exampleInputEmail1">글내용</label> <br>
-								<textarea  id="content" class='content_box' name="content" placeholder="내용" required="required" style='resize:none; width:70%;  overflow: visible;'></textarea>
+								<textarea  title='comm_content' id="content" class='content_box' name="content" placeholder="내용" required="required" style='resize:none; width:70%;  overflow: visible;'></textarea>
 								<span id="contentLength"></span>
 							</div>
 						</div>
 						<div>
 							<div class="form-group">
 								<label for="exampleInputEmail1">작성자</label> <br>
-								<input type="text" id="writer" class="writer_box" name="writer" placeholder="이름" required="required">
-								<input type='text' style='display: none;' />
+								<input title='comm_writer' type="text" id="writer" class="writer_box" name="writer" placeholder="이름" required="required">
+								<input type="submit" style='display: none;' />
 								<span id="writerLength"></span>
 							</div>
 						</div>
@@ -277,7 +277,7 @@ $(document).ready(function() {
 		<!--/.col (left) -->
 
 	</div>
-	<!-- /.row -->
+	<!-- /.	 -->
 </section>
 <!-- /.content -->
 <!-- /.content-wrapper -->

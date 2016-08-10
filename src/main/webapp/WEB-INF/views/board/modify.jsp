@@ -29,14 +29,34 @@
 		
 		init(data); // modify.js : 초기화
 		
+		var filesLength = $(".deleteFiles").length; // 현재 가져온 파일 개수
+		var delete_filesLength = $(".deleteFiles:checked").length; // 삭제 예정인 파일 개수
+		var files = filesLength - delete_filesLength; // 보존할 가져온 파일 개수
+		var count = files + $('.uploadFile').length; // 현재 추가 예정인 파일 수
+		
+		if(count > 10){
+			$('.uploadFile:last-child').remove();
+		}
+		
+		$('.deleteFiles').change(function() {
+			var filesLength = $(".deleteFiles").length; // 현재 가져온 파일 개수
+			var delete_filesLength = $(".deleteFiles:checked").length; // 삭제 예정인 파일 개수
+			var files = filesLength - delete_filesLength; // 보존할 가져온 파일 개수
+			var count = files + $('.uploadFile').length; // 현재 추가 예정인 파일 수
+// 			alert(count);
+			for (var i = 0; i < count-10; i++) {
+				$('.uploadFile:last-child').remove();
+			}
+		});
+		
 		$('#add_file').click(function() {
 			
 			// 삭제 일때의 개수를 파악하는 디자인으로 가면 추가 적으로 발생 하는 예외에 대한 조건 처리가 많아 짐
 			
 			var filesLength = $(".deleteFiles").length;
 			var delete_filesLength = $(".deleteFiles:checked").length; 
-// 			var files = filesLength - delete_filesLength;
-			var files = filesLength;
+			var files = filesLength - delete_filesLength;
+// 			var files = filesLength;
 // 			alert(files);
 			var count = files + $('.uploadFile').length;
 // 			alert(count);

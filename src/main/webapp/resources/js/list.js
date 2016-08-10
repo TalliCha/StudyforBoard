@@ -190,17 +190,17 @@
 			 
 			if(list[idx].count_cno==0){
 				linkNm = "<a class='pageMove' href='/board/page?bno=" + list[idx].bno + "'>"
-				+ titleTab+"<span class='titleOverLength'>"+list[idx].title+"</span>"+upload_file+ "</a>";
+				+ titleTab+"<span class='titleOverLength'>"+list[idx].title.replace(/</gi,'&#x003C;')+"</span>"+upload_file+ "</a>";
 				
 			}else{
 				linkNm = "<a class='pageMove' href='/board/page?bno=" + list[idx].bno + "'>"
-				+ titleTab+"<span class='titleOverLength'> "+list[idx].title +"</span>"+"<span class='label label-warning pull-right'>"+ list[idx].count_cno + "</span>" +upload_file+ "</a>";
+				+ titleTab+"<span class='titleOverLength'> "+list[idx].title.replace(/</gi,'&#x003C;') +"</span>"+"<span class='label label-warning pull-right'>"+ list[idx].count_cno + "</span>" +upload_file+ "</a>";
 				
 			}
 			
 			
 			var row = "<tr>" + "<td>" + list[idx].rno + "</td>" + "<td title='"+list[idx].title+"'>"	
-					+ linkNm + "</td>" + "<td title='"+list[idx].writer+"'>" + list[idx].writer + "</td>"
+					+ linkNm + "</td>" + "<td title='"+list[idx].writer+"'>" + list[idx].writer.replace(/</gi,'&#x003C;') + "</td>"
 					+ "<td>" + list[idx].regdate + "</td>"
 					+ "<td><span class='badge bg-red'>" + list[idx].viewcnt
 					+ "</span></td>" + "</tr>";

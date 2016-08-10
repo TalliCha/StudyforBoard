@@ -302,7 +302,7 @@ function addList(data,list) {
 		
 		contentTab = (list[idx].reply_lv == 0 )? contentTab : contentTab +"<br>";
 		
-		content = contentTab+"<textarea id='"+list[idx].cno+"' class=' content_box no_border' type='text' readonly='readonly' style='resize:none; width:70%; overflow:visible; '>"+list[idx].content+"</textarea>" ;
+		content = contentTab+"<textarea id='"+list[idx].cno+"' class=' content_box no_border' type='text' readonly='readonly' style='resize:none; width:70%; overflow:visible; '>"+list[idx].content.replace(/</gi,'&#x003C;')+"</textarea>" ;
 		
 		if(data.cno == list[idx].cno ){
 			add_btns += sumit_btn +cancel_btn + delete_btn +modify_btn  + reply_btn;
@@ -315,14 +315,14 @@ function addList(data,list) {
 									+"<div>"
 										+"<div class='form-group'>"
 											+"<label for='exampleInputEmail1'>글내용</label> <br>"
-											+"<textarea  id='content"+list[idx].cno+"' class='content_box' name='content' placeholder='내용' required='required' style='resize:none; width:70%;  overflow: visible;'></textarea>"
+											+"<textarea title='comm_content' id='content"+list[idx].cno+"' class='content_box' name='content' placeholder='내용' required='required' style='resize:none; width:70%;  overflow: visible;'></textarea>"
 											+"<span id='content"+list[idx].cno+"Length'></span>"
 										+"</div>"
 									+"</div>"
 									+"<div>"
 										+"<div class='form-group'>"
 											+"<label for='exampleInputEmail1'>작성자</label> <br>"
-											+"<input type='text' id='writer"+list[idx].cno+"' class='writer_box' name='writer' placeholder='이름' required='required'>"
+											+"<input title='comm_writer' type='text' id='writer"+list[idx].cno+"' class='writer_box' name='writer' placeholder='이름' required='required'>"
 											+"<input type='text' style='display: none;' />"
 											+"<span id='writer"+list[idx].cno+"Length'></span>"
 										+"</div>"
@@ -331,7 +331,7 @@ function addList(data,list) {
 								+"</form>"
 								+"</div>";
 		
-		var row = "<tr>"+ "<td class='tchangeLength"+list[idx].cno+"' >"+ list[idx].rno + "<td class='tchangeLength"+list[idx].cno+"'>"	+ content  + add_btns + reply_box+ "</td>" + "<td class='tchangeLength"+list[idx].cno+"'>" + list[idx].writer + "</td>"
+		var row = "<tr>"+ "<td class='tchangeLength"+list[idx].cno+"' >"+ list[idx].rno + "<td class='tchangeLength"+list[idx].cno+"'>"	+ content  + add_btns + reply_box+ "</td>" + "<td class='tchangeLength"+list[idx].cno+"'>" + list[idx].writer.replace(/</gi,'&#x003C;') + "</td>"
 				+ "<td class='tchangeLength"+list[idx].cno+"'>" + list[idx].regdate + "</td>"	+ "</tr>";
 				
 		$('#comm_list').append(row);
